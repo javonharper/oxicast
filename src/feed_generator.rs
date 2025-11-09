@@ -4,6 +4,8 @@ use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
 
+use crate::network::get_host_ip;
+
 pub fn generate_feeds(root_dir: &str) {
     let root = Path::new(root_dir);
 
@@ -54,18 +56,24 @@ pub fn generate_show_feed(show_dir: &str) {
     let rss_path = show_dir.join("feed.xml");
 
     fs::write(rss_path, channel.to_string()).expect("Failed to write feed");
-    println!("Generated feed for \"{}\"", show_name);
-    // println!("{:?}", channel.to_string());
+    // println!("Generated feed for \"{}\"", show_name);
+    println!(
+        "http://{}:8080/shows/{}/feed.xml",
+        get_host_ip().expect("Could not get ip for host"),
+        show_name
+    );
 }
 
 fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
     let file_name_with_extension = episode_path.split('/').last().unwrap();
     let item_title = file_name_with_extension.split('.').next().unwrap();
 
+    let local_ip = get_host_ip().expect("Failed to get local IP");
+
     let enclosure = EnclosureBuilder::default()
         .url(format!(
-            "http://localhost:8080/shows/{}/{}",
-            show_name, file_name_with_extension
+            "{}:8080/shows/{}/{}",
+            local_ip, show_name, file_name_with_extension
         ))
         .build();
 

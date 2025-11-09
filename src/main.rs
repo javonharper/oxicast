@@ -27,4 +27,5 @@ fn main() {
 }
 
 mod feed_generator;
+mod network;
 mod server;

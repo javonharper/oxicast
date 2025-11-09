@@ -2,7 +2,10 @@ use axum::{
     Router,
     routing::{get, get_service},
 };
+
 use tower_http::services::ServeDir;
+
+use crate::network::get_host_ip;
 
 #[tokio::main]
 pub async fn serve(root_dir: &str) {
@@ -19,12 +22,11 @@ pub async fn serve(root_dir: &str) {
             }),
         );
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080")
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
 
-    println!("Serving directory {}", root_dir);
-    println!("Serving on http://127.0.0.1:8080/shows");
+    // println!("Serving directory {}", root_dir);
+    let ip = get_host_ip().expect("Failed to get local IP");
+    // println!("Serving on http://{}:8080/shows", ip);
 
     axum::serve(listener, app).await.unwrap();
 }
