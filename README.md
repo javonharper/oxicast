@@ -1,6 +1,6 @@
 # oxicast
 
-Turn a folder into podcast shows
+Turn folders of audio files into podcast shows
 
 ## What does it do?
 - [x] Read a list of show directories from a root directory
