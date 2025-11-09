@@ -1,3 +1,5 @@
+[![Build](https://github.com/javonharper/oxicast/actions/workflows/build.yml/badge.svg)](https://github.com/javonharper/oxicast/actions/workflows/build.yml)
+
 # oxicast
 
 Turn folders of audio files into podcast shows
