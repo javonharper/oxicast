@@ -10,3 +10,40 @@ Turn folders of audio files into podcast shows
 - [x] Serve the RSS feed and audio files on a local server at http://127.0.0.1:8080
 - [ ] Serve directories for a better user experience
 - [ ] Pull id3 tags from audio files to fill metadata
+
+# Usage
+
+Point oxicast to a directory containing your podcast shows:
+
+```bash
+oxicast --dir /path/to/your/podcasts
+```
+
+### Directory Structure
+
+Organize your audio files like this:
+
+```
+podcasts/
+├── Show One/
+│   ├── episode1.mp3
+│   ├── episode2.mp3
+│   └── feed.xml (generated)
+└── Show Two/
+    ├── episode1.mp3
+    └── feed.xml (generated)
+```
+
+Each subdirectory represents a podcast show. oxicast will generate a `feed.xml` file in each show directory and serve both the feeds and audio files.
+
+### Accessing Your Podcasts
+
+Once running, you can:
+
+1. View the feed at `http://127.0.0.1:8080/Show%20One/feed.xml`
+2. Add this URL to your favorite podcast app
+3. Access audio files directly at `http://127.0.0.1:8080/Show%20One/episode1.mp3`
+
+## License
+
+MIT
