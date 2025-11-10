@@ -44,6 +44,9 @@ Once running, you can:
 2. Add this URL to your favorite podcast app
 3. Access audio files directly at `http://127.0.0.1:8080/Show%20One/episode1.mp3`
 
+> [!NOTE]
+> Make sure your podcast app downloads the episodes before shutting down the server.
+
 ## License
 
 MIT
