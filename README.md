@@ -9,7 +9,7 @@ Turn folders of audio files into podcast shows
 - [x] Generate an RSS feed for each show directory `feed.xml`.
 - [x] Serve the RSS feed and audio files on a local server at http://127.0.0.1:8080
 - [ ] Serve directories for a better user experience
-- [ ] Pull id3 tags from audio files to fill metadata
+- [ ] Pull metadata tags from audio files to fill metadata
 
 # Usage
 
