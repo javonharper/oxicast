@@ -79,7 +79,7 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
 
     let enclosure = EnclosureBuilder::default()
         .url(format!(
-            "{}:8080/shows/{}/{}",
+            "http://{}:8080/shows/{}/{}",
             local_ip, show_name, file_name_with_extension
         ))
         .build();
