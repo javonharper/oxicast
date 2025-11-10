@@ -72,6 +72,7 @@ pub fn generate_show_feed(show_dir: &str) {
 }
 
 fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
+    let file_size = fs::metadata(episode_path).unwrap().len();
     let file_name_with_extension = episode_path.split('/').last().unwrap();
     let item_title = file_name_with_extension.split('.').next().unwrap();
 
@@ -82,6 +83,7 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
             "http://{}:8080/shows/{}/{}",
             local_ip, show_name, file_name_with_extension
         ))
+        .length(file_size.to_string())
         .build();
 
     let item = ItemBuilder::default()
