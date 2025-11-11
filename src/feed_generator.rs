@@ -1,4 +1,4 @@
-// use id3::Tag;
+use chrono::{DateTime, Utc};
 use rss::{ChannelBuilder, EnclosureBuilder, ImageBuilder, ItemBuilder};
 use std::fs;
 use std::path::Path;
@@ -76,6 +76,10 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
     let file_name_with_extension = episode_path.split('/').last().unwrap();
     let item_title = file_name_with_extension.split('.').next().unwrap();
 
+    let creation_date = fs::metadata(episode_path).unwrap().created().unwrap();
+    let datetime: DateTime<Utc> = creation_date.into();
+    let rfc3339_date = datetime.to_rfc3339();
+
     let local_ip = get_host_ip().expect("Failed to get local IP");
 
     let enclosure = EnclosureBuilder::default()
@@ -89,6 +93,7 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
     let item = ItemBuilder::default()
         .title(Some(item_title.into()))
         .author(Some(show_name.into()))
+        .pub_date(Some(rfc3339_date.into()))
         .enclosure(enclosure)
         .build();
 
