@@ -28,17 +28,28 @@ pub fn generate_show_feed(show_dir: &str) {
     let show_dir = Path::new(show_dir);
 
     let show_name = show_dir.file_name().unwrap().to_str().unwrap();
+    let cover_path = show_dir.join("cover.jpg");
+    let cover_url = format!(
+        "http://{}:8080/shows/{}/cover.jpg",
+        get_host_ip().expect("could not get host ip for cover art"),
+        show_name
+    );
+    let has_cover = cover_path.exists();
 
-    // println!(
-    //     "Generating feed for show: \"{}\" at {}",
-    //     show_name,
-    //     show_dir.display()
-    // );
+    let default_image_url =
+        "https://raw.githubusercontent.com/javonharper/oxicast/refs/heads/main/logo.png";
 
-    let image = ImageBuilder::default()
-        .url("https://raw.githubusercontent.com/javonharper/oxicast/refs/heads/main/logo.png")
-        .title("Show Image")
-        .build();
+    let image = if has_cover {
+        ImageBuilder::default()
+            .url(cover_url)
+            .title("Show Image")
+            .build()
+    } else {
+        ImageBuilder::default()
+            .url(default_image_url)
+            .title("Show Image")
+            .build()
+    };
 
     let mut channel = ChannelBuilder::default()
         .title(show_name)
@@ -63,7 +74,7 @@ pub fn generate_show_feed(show_dir: &str) {
     let rss_path = show_dir.join("feed.xml");
 
     fs::write(rss_path, channel.to_string()).expect("Failed to write feed");
-    // println!("Generated feed for \"{}\"", show_name);
+
     println!(
         "http://{}:8080/shows/{}/feed.xml",
         get_host_ip().expect("Could not get ip for host"),
@@ -78,7 +89,6 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
 
     let creation_date = fs::metadata(episode_path).unwrap().created().unwrap();
     let datetime: DateTime<Utc> = creation_date.into();
-    let rfc3339_date = datetime.to_rfc3339();
 
     let local_ip = get_host_ip().expect("Failed to get local IP");
 
@@ -93,7 +103,7 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
     let item = ItemBuilder::default()
         .title(Some(item_title.into()))
         .author(Some(show_name.into()))
-        .pub_date(Some(rfc3339_date.into()))
+        .pub_date(Some(datetime.to_rfc2822()))
         .enclosure(enclosure)
         .build();
 
