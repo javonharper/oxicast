@@ -30,7 +30,7 @@ pub fn generate_show_feed(show_dir: &str) {
     let show_name = show_dir.file_name().unwrap().to_str().unwrap();
     let cover_path = show_dir.join("cover.jpg");
     let cover_url = format!(
-        "http://{}:8080/shows/{}/cover.jpg",
+        "http://{}:8080/files/{}/cover.jpg",
         get_host_ip().expect("could not get host ip for cover art"),
         show_name
     );
@@ -76,7 +76,7 @@ pub fn generate_show_feed(show_dir: &str) {
     fs::write(rss_path, channel.to_string()).expect("Failed to write feed");
 
     println!(
-        "http://{}:8080/shows/{}/feed.xml",
+        "http://{}:8080/files/{}/feed.xml",
         get_host_ip().expect("Could not get ip for host"),
         show_name
     );
@@ -94,7 +94,7 @@ fn create_feed_item(show_name: &str, episode_path: &str) -> rss::Item {
 
     let enclosure = EnclosureBuilder::default()
         .url(format!(
-            "http://{}:8080/shows/{}/{}",
+            "http://{}:8080/files/{}/{}",
             local_ip, show_name, file_name_with_extension
         ))
         .length(file_size.to_string())

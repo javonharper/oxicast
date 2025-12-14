@@ -10,7 +10,7 @@ Turn folders of audio files into podcast shows
 - [x] Serve the RSS feed and audio files on a local server at http://127.0.0.1:8080
 - [x] Adds show art if cover.jpg is provided
 - [x] Uses file creation date as episode date
-- [ ] Serve directories for a better user experience
+- [x] Serve directories with a homepage and browsable directory listings
 - [ ] Pull metadata tags from audio files to fill metadata
 
 # Usage
@@ -43,9 +43,11 @@ Each subdirectory represents a podcast show. oxicast will generate a `feed.xml` 
 
 Once running, you can:
 
-1. View the feed at `http://127.0.0.1:8080/Show%20One/feed.xml`
-2. Add this URL to your favorite podcast app
-3. Access audio files directly at `http://127.0.0.1:8080/Show%20One/episode1.mp3`
+1. Visit the homepage at `http://127.0.0.1:8080/` to see all your shows
+2. Browse files in each show directory through the web interface
+3. View the feed at `http://127.0.0.1:8080/files/Show%20One/feed.xml`
+4. Add the feed URL to your favorite podcast app
+5. Access audio files directly at `http://127.0.0.1:8080/files/Show%20One/episode1.mp3`
 
 > [!NOTE]
 > Make sure your podcast app downloads the episodes before shutting down the server.
