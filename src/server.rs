@@ -192,9 +192,33 @@ async fn directory_listing(
     State(state): State<AppState>,
     Path(path): Path<String>,
 ) -> Response {
-    let full_path = PathBuf::from(&state.root_dir).join(&path);
+    let root_dir = PathBuf::from(&state.root_dir);
+    let full_path = root_dir.join(&path);
     
-    if !full_path.starts_with(&state.root_dir) {
+    // Canonicalize paths for secure comparison
+    let canonical_full = match full_path.canonicalize() {
+        Ok(p) => p,
+        Err(_) => {
+            return (
+                axum::http::StatusCode::NOT_FOUND,
+                Html("<h1>404 Not Found</h1>".to_string()),
+            )
+                .into_response();
+        }
+    };
+    
+    let canonical_root = match root_dir.canonicalize() {
+        Ok(p) => p,
+        Err(_) => {
+            return (
+                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                Html("<h1>500 Internal Server Error</h1>".to_string()),
+            )
+                .into_response();
+        }
+    };
+    
+    if !canonical_full.starts_with(&canonical_root) {
         return (
             axum::http::StatusCode::FORBIDDEN,
             Html("<h1>403 Forbidden</h1>".to_string()),
@@ -295,12 +319,24 @@ async fn directory_listing(
             items.sort_by_key(|e| e.file_name());
 
             for entry in items {
-                if let (Ok(metadata), Ok(file_name)) = (entry.metadata(), entry.file_name().into_string()) {
+                if let Ok(metadata) = entry.metadata() {
+                    let file_name = entry.file_name().to_string_lossy().to_string();
                     let is_dir = metadata.is_dir();
                     let icon = if is_dir { "📁" } else { "📄" };
-                    let file_path = format!("/files/{}/{}", urlencoding::encode(&path), urlencoding::encode(&file_name));
+                    
+                    // Handle empty path case to avoid double slashes
+                    let file_path = if path.is_empty() {
+                        format!("/files/{}", urlencoding::encode(&file_name))
+                    } else {
+                        format!("/files/{}/{}", urlencoding::encode(&path), urlencoding::encode(&file_name))
+                    };
+                    
                     let link = if is_dir {
-                        format!("/shows/{}/{}", urlencoding::encode(&path), urlencoding::encode(&file_name))
+                        if path.is_empty() {
+                            format!("/shows/{}", urlencoding::encode(&file_name))
+                        } else {
+                            format!("/shows/{}/{}", urlencoding::encode(&path), urlencoding::encode(&file_name))
+                        }
                     } else {
                         file_path
                     };
